@@ -14,7 +14,7 @@ class RSScreator
 
     @filepath = filepath
     
-    if filepath then
+    if filepath and File.exists? filepath then
       
       rtd = RSStoDynarex.new filepath
       @dx = rtd.to_dynarex      
@@ -33,17 +33,21 @@ class RSScreator
                                                       'link:link,pubDate:date)'
     # maxium number of items saved in the RSS feed
     @limit = 11
+    @dirty = true    
 
   end
 
   def add(item={title: '', link: '', description: ''})
-
+    
     unless item[:title] and item[:link] then
       raise 'RSScreator: title or link can\'t be blank' 
     end
     
     record = {date: Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")}.merge(item)
     @dx.create record
+    
+    @dirty = true
+    
   end
 
   def save(new_filepath=nil)
@@ -51,9 +55,24 @@ class RSScreator
     filepath = new_filepath ? new_filepath : @filepath
     File.write filepath, print_rss
   end
+  
+  def description=(val)
+    @description = val
+    @dirty = true
+  end  
 
   def dynarex()
     @dx
+  end
+
+  def link=(val)
+    @link = val
+    @dirty = true
+  end  
+  
+  def title=(val)
+    @title = val
+    @dirty = true
   end
 
   def to_s()
@@ -63,13 +82,17 @@ class RSScreator
   private
 
   def print_rss()
+    
+    return @rss unless @dirty
 
     if @title.nil? or @description.nil?  then
       raise 'RSScreator: title or description can\'t be blank' 
     end
 
     @dx.title, @dx.description, @dx.link = @title, @description, @link || ''
-    @dx.to_rss({limit: @limit})
+    @rss = @dx.to_rss({limit: @limit})
+    @dirty = false
+    @rss
 
   end
 
