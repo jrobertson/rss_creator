@@ -12,7 +12,7 @@ class RSScreator
 
   def initialize(filepath=nil)
 
-    @filepathpath = filepath
+    @filepath = filepath
     
     if filepath then
       
