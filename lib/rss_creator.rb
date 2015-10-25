@@ -3,20 +3,32 @@
 # file: rss_creator.rb
 
 require 'dynarex'
+require 'rss_to_dynarex'
 
 
 class RSScreator
 
-  attr_accessor :title, :desc, :limit
+  attr_accessor :title, :description, :limit
 
   def initialize(filepath=nil)
 
     @filepathpath = filepath
-    @dx = Dynarex.new 'channel[title,desc]/item(title, link, description, created_at)'
-    @dx.order = 'descending'
-    @dx.xslt_schema = 'channel[title:title,description:desc]/' \
+    
+    if filepath then
+      
+      rtd = RSStoDynarex.new filepath
+      @dx = rtd.to_dynarex      
+      @title = @dx.title
+      @description = @dx.description
+      
+    else
+      @dx = Dynarex.new 'channel[title,description]/item(title, link, description, created_at)'
+      @dx.order = 'descending'
+    end
+        
+    @dx.xslt_schema = 'channel[title:title,description:description]/' \
           + 'item(title:title,description:description,link:link,pubDate:created_at)'
-    @dx.title, @dx.desc = '', ''
+
 
     # maxium number of items saved in the RSS feed
     @limit = 11
@@ -30,7 +42,7 @@ class RSScreator
     @dx.create record
   end
 
-  def save(new_filepath)
+  def save(new_filepath=nil)
 
     filepath = new_filepath ? new_filepath : @filepath
     File.write filepath, print_rss
@@ -48,11 +60,11 @@ class RSScreator
 
   def print_rss()
 
-    if @title.nil? or @desc.nil? then
-      raise 'RSScreator: title, or desc can\'t be blank' 
+    if @title.nil? or @description.nil? then
+      raise 'RSScreator: title, or description can\'t be blank' 
     end
 
-    @dx.title, @dx.desc = @title, @desc
+    @dx.title, @dx.description = @title, @description
     @dx.to_rss({limit: @limit})
 
   end
