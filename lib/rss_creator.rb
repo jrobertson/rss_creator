@@ -8,7 +8,7 @@ require 'rss_to_dynarex'
 
 class RSScreator
 
-  attr_accessor :title, :description, :limit
+  attr_accessor :title, :description, :link, :limit
 
   def initialize(filepath=nil)
 
@@ -20,16 +20,17 @@ class RSScreator
       @dx = rtd.to_dynarex      
       @title = @dx.title
       @description = @dx.description
+      @link = @dx.link
       
     else
-      @dx = Dynarex.new 'channel[title,description]/item(title, link, description, created_at)'
+      @dx = Dynarex.new 'channel[title, description, link]/' + \
+                                         'item(title, link, description, date)'
       @dx.order = 'descending'
     end
         
-    @dx.xslt_schema = 'channel[title:title,description:description]/' \
-          + 'item(title:title,description:description,link:link,pubDate:created_at)'
-
-
+    @dx.xslt_schema = 'channel[title:title,description:description,' + \
+                    'link:link]/item(title:title,description:description,' + \
+                                                      'link:link,pubDate:date)'
     # maxium number of items saved in the RSS feed
     @limit = 11
 
@@ -37,8 +38,11 @@ class RSScreator
 
   def add(item={title: '', link: '', description: ''})
 
-    record = {created_at: Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")}.\
-                                                                    merge(item)
+    unless item[:title] and item[:link] then
+      raise 'RSScreator: title or link can\'t be blank' 
+    end
+    
+    record = {date: Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")}.merge(item)
     @dx.create record
   end
 
@@ -60,11 +64,11 @@ class RSScreator
 
   def print_rss()
 
-    if @title.nil? or @description.nil? then
-      raise 'RSScreator: title, or description can\'t be blank' 
+    if @title.nil? or @description.nil?  then
+      raise 'RSScreator: title or description can\'t be blank' 
     end
 
-    @dx.title, @dx.description = @title, @description
+    @dx.title, @dx.description, @dx.link = @title, @description, @link || ''
     @dx.to_rss({limit: @limit})
 
   end
