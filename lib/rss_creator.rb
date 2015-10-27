@@ -8,7 +8,7 @@ require 'rss_to_dynarex'
 
 class RSScreator
 
-  attr_accessor :title, :description, :link, :limit
+  attr_accessor :title, :description, :link, :limit, :xslt
 
   def initialize(filepath=nil)
 
@@ -59,7 +59,10 @@ class RSScreator
   def description=(val)
     @description = val
     @dirty = true
-  end  
+  end
+
+  alias desc= description=
+  alias desc description
 
   def dynarex()
     @dx
@@ -90,10 +93,26 @@ class RSScreator
     end
 
     @dx.title, @dx.description, @dx.link = @title, @description, @link || ''
-    @rss = @dx.to_rss({limit: @limit})
+    
+    @rss = if @xslt then
+    
+      @dx.to_rss({limit: @limit}) do |doc|
+        
+        doc.instructions << ['xml-stylsheet',\
+          "title='XSL_formatting' type='text/xsl' href='/xsl/dynarex-b.xsl'"]
+        
+      end      
+      
+    else
+      
+      @dx.to_rss({limit: @limit})
+      
+    end
+    
     @dirty = false
     @rss
 
   end
 
 end
+
