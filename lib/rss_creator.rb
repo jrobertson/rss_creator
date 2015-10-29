@@ -19,8 +19,6 @@ class RSScreator
       rtd = RSStoDynarex.new filepath
       @dx = rtd.to_dynarex
 
-      @dx.default_key = 'uid'
-
       @title = @dx.title
       @description = @dx.description
       @link = @dx.link
@@ -30,7 +28,8 @@ class RSScreator
                                          'item(title, link, description, date)'
       @dx.order = 'descending'
     end
-
+    
+    @dx.default_key = 'uid'
     @dx.xslt = dx_xslt if dx_xslt    
     @dx.xslt_schema = 'channel[title:title,description:description,' + \
                     'link:link]/item(title:title,description:description,' + \
@@ -41,14 +40,14 @@ class RSScreator
 
   end
 
-  def add(item={title: '', link: '', description: ''})
+  def add(item={title: '', link: '', description: ''}, id: nil)
     
     unless item[:title] and item[:link] then
       raise 'RSScreator: title or link can\'t be blank' 
     end
     
     record = {date: Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")}.merge(item)
-    @dx.create record
+    @dx.create(record, id: id)
     
     @dirty = true
     
