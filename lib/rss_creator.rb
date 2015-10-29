@@ -10,17 +10,21 @@ class RSScreator
 
   attr_accessor :title, :description, :link, :limit, :xslt
 
-  def initialize(filepath=nil)
+  def initialize(filepath=nil, dx_xslt: nil)
 
     @filepath = filepath
     
     if filepath and File.exists? filepath then
       
       rtd = RSStoDynarex.new filepath
-      @dx = rtd.to_dynarex      
+      @dx = rtd.to_dynarex
+
+      @dx.default_key = 'uid'
+      @dx.xslt = dx_xslt if dx_xslt
       @title = @dx.title
       @description = @dx.description
       @link = @dx.link
+      @dx.save File.join(File.dirname(filepath), 'raw.xml')            
       
     else
       @dx = Dynarex.new 'channel[title, description, link]/' + \
@@ -54,6 +58,7 @@ class RSScreator
 
     filepath = new_filepath ? new_filepath : @filepath
     File.write filepath, print_rss
+    @dx.save File.join(File.dirname(filepath), 'feed.xml')
   end
   
   def description=(val)
