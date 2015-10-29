@@ -20,18 +20,18 @@ class RSScreator
       @dx = rtd.to_dynarex
 
       @dx.default_key = 'uid'
-      @dx.xslt = dx_xslt if dx_xslt
+
       @title = @dx.title
       @description = @dx.description
       @link = @dx.link
-      @dx.save File.join(File.dirname(filepath), 'raw.xml')            
       
     else
       @dx = Dynarex.new 'channel[title, description, link]/' + \
                                          'item(title, link, description, date)'
       @dx.order = 'descending'
     end
-        
+
+    @dx.xslt = dx_xslt if dx_xslt    
     @dx.xslt_schema = 'channel[title:title,description:description,' + \
                     'link:link]/item(title:title,description:description,' + \
                                                       'link:link,pubDate:date)'
