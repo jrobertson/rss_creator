@@ -26,16 +26,16 @@ class RSScreator
     else
       @dx = Dynarex.new 'channel[title, description, link]/' + \
                                          'item(title, link, description, date)'
-      @dx.order = 'descending'
     end
-    
+
+    @dx.order = 'descending'    
     @dx.default_key = 'uid'
     @dx.xslt = dx_xslt if dx_xslt    
     @dx.xslt_schema = 'channel[title:title,description:description,' + \
                     'link:link]/item(title:title,description:description,' + \
                                                       'link:link,pubDate:date)'
     # maxium number of items saved in the RSS feed
-    @limit = 11
+    @dx.limit = @limit = 10
     @dirty = true    
 
   end
