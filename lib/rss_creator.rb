@@ -10,7 +10,7 @@ class RSScreator
 
   attr_accessor :title, :description, :link, :limit, :xslt
 
-  def initialize(filepath=nil, dx_xslt: nil)
+  def initialize(filepath=nil, dx_xslt: nil, dx_filename: 'feed.xml')
 
     @filepath = filepath
     
@@ -36,7 +36,8 @@ class RSScreator
                                                       'link:link,pubDate:date)'
     # maxium number of items saved in the RSS feed
     @dx.limit = @limit = 10
-    @dirty = true    
+    @dirty = true
+    @dxfilename = dx_filename
 
   end
 
@@ -57,7 +58,7 @@ class RSScreator
 
     filepath = new_filepath ? new_filepath : @filepath
     File.write filepath, print_rss
-    @dx.save File.join(File.dirname(filepath), 'feed.xml')
+    @dx.save File.join(File.dirname(filepath), @dxfilename) if @dxfilename
   end
   
   def description=(val)
