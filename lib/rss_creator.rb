@@ -103,7 +103,7 @@ class RSScreator
     
       @dx.to_rss({limit: @limit}) do |doc|
         
-        doc.instructions << ['xml-stylsheet',\
+        doc.instructions << ['xml-stylesheet',\
           "title='XSL_formatting' type='text/xsl' href='#{@xslt}'"]
         
       end      
