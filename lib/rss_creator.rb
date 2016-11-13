@@ -14,7 +14,11 @@ class RSScreator
 
     @filepath = filepath
     
-    if filepath and File.exists? filepath then
+    dxfilepath = File.join(File.dirname(filepath), dx_filename)
+    
+    if filepath and File.exists? dxfilepath then
+      @dx = Dynarex.new dxfilepath
+    elsif filepath and File.exists? filepath
       
       rtd = RSStoDynarex.new filepath
       @dx = rtd.to_dynarex
