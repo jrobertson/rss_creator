@@ -10,10 +10,11 @@ class RSScreator
 
   attr_accessor :title, :description, :link, :limit, :xslt
 
-  def initialize(filepath=nil, dx_xslt: nil, dx_filename: 'feed.xml')
+  def initialize(filepath='feed.rss', dx_xslt: nil, dx_filename: 'feed.xml')
+
 
     @filepath = filepath
-    
+
     dxfilepath = File.join(File.dirname(filepath), dx_filename)
     
     if filepath and File.exists? dxfilepath then
