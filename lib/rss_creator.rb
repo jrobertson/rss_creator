@@ -10,7 +10,8 @@ class RSScreator
 
   attr_accessor :title, :description, :link, :limit, :xslt
 
-  def initialize(filepath='rss.xml', dx_xslt: nil, dx_filename: 'feed.xml')
+  def initialize(filepath='rss.xml', dx_xslt: nil, 
+                 dx_filename: 'feed.xml', custom_fields: [])
 
 
     @filepath = filepath
@@ -30,8 +31,13 @@ class RSScreator
       @title, @description, @link = @dx.title, @dx.description, @dx.link
       
     else
-      @dx = Dynarex.new 'channel[title, description, link]/' + \
-                                         'item(title, link, description, date)'
+      
+      schema = 'channel[title, description, link]/' + \
+                                'item(title, link, description, date'
+      schema +=  ', ' + custom_fields.join(', ') if custom_fields.any?
+      schema += ')'
+      
+      @dx = Dynarex.new schema
     end
 
     @dx.order = 'descending'    

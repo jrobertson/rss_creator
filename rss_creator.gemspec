@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rss_creator'
-  s.version = '0.3.6'
+  s.version = '0.3.7'
   s.summary = 'A gem for creating RSS feeds'
   s.authors = ['James Robertson']
   s.files = Dir['lib/rss_creator.rb']
@@ -9,6 +9,6 @@ Gem::Specification.new do |s|
   s.signing_key = '../privatekeys/rss_creator.pem'
   s.cert_chain  = ['gem-public_cert.pem']
   s.license = 'MIT'
-  s.email = 'james@r0bertson.co.uk'
+  s.email = 'james@jamesrobertson.eu'
   s.homepage = 'https://github.com/jrobertson/rss_creator'
 end
