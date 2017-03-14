@@ -19,42 +19,50 @@ class RSScreator
     dxfilepath = File.join(File.dirname(filepath), dx_filename)
     
     if filepath and File.exists? dxfilepath then
-      
+
       @dx = Dynarex.new dxfilepath
       @title, @description, @link = @dx.title, @dx.description, @dx.link
-      
-    elsif filepath and File.exists? filepath
-      
-      rtd = RSStoDynarex.new filepath
-      @dx = rtd.to_dynarex
 
-      @title, @description, @link = @dx.title, @dx.description, @dx.link
-      
     else
+      if filepath and File.exists? filepath
       
-      schema = 'channel[title, description, link]/' + \
-                                'item(title, link, description, date'
-      schema +=  ', ' + custom_fields.join(', ') if custom_fields.any?
-      schema += ')'
-      
-      @dx = Dynarex.new schema
-    end
+        rtd = RSStoDynarex.new filepath
+        @dx = rtd.to_dynarex
 
-    @dx.order = 'descending'    
-    @dx.default_key = 'uid'
-    @dx.xslt = dx_xslt if dx_xslt    
+        @title, @description, @link = @dx.title, @dx.description, @dx.link
+      
+      else
+
+      
+        schema = 'channel[title, description, link]/' + \
+                                  'item(title, link, description, date'
+        schema +=  ', ' + custom_fields.join(', ') if custom_fields.any?
+        schema += ')'
+        
+        @dx = Dynarex.new schema
+      end
+
+      @dx.order = 'descending'    
+      @dx.default_key = 'uid'
+      @dx.xslt = dx_xslt if dx_xslt    
+
+      
+    end
+    
     @dx.xslt_schema = 'channel[title:title,description:description,' + \
                     'link:link]/item(title:title,description:description,' + \
                                                       'link:link,pubDate:date)'
     # maxium number of items saved in the RSS feed
-    @dx.limit = @limit = 10
+    @dx.limit = @limit = 10          
+
+
     @dirty = true
     @dxfilename = dx_filename
 
   end
 
-  def add(item={title: '', link: '', description: ''}, id: nil)
-    
+  def add(item: {title: '', link: '', description: ''}, id: nil)
+
     unless item[:title] and item[:link] then
       raise 'RSScreator: title or link can\'t be blank' 
     end
