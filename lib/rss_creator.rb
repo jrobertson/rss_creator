@@ -85,6 +85,10 @@ class RSScreator
     @description = val
     @dirty = true
   end
+  
+  def delete(id)
+    @dx.delete id.to_s
+  end
 
   alias desc= description=
   alias desc description
