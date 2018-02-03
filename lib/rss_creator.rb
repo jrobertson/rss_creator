@@ -11,7 +11,7 @@ class RSScreator
   attr_accessor :title, :description, :link, :limit, :xslt
 
   def initialize(filepath='rss.xml', dx_xslt: nil, 
-                 dx_filename: 'feed.xml', custom_fields: [])
+                 dx_filename: 'feed.xml', custom_fields: [], limit: 10)
 
 
     @filepath = filepath
@@ -53,7 +53,7 @@ class RSScreator
                     'link:link]/item(title:title,description:description,' + \
                                                       'link:link,pubDate:date)'
     # maxium number of items saved in the RSS feed
-    @dx.limit = @limit = 10          
+    @dx.limit = @limit = limit
 
 
     @dirty = true
