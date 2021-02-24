@@ -23,6 +23,7 @@ class RSScreator
 
       @dx = Dynarex.new dxfilepath
       @title, @description, @link = @dx.title, @dx.description, @dx.link
+      @image_url = @dx.image
 
     else
       if filepath and File.exists? filepath
@@ -31,6 +32,8 @@ class RSScreator
         @dx = rtd.to_dynarex
 
         @title, @description, @link = @dx.title, @dx.description, @dx.link
+        @image_url = @dx.image if @dx.image and @dx.image.length > 1
+        @image_target_url = @link if @link and @link.length > 1
       
       else
 
@@ -135,7 +138,7 @@ class RSScreator
     end
 
     @dx.title, @dx.description, @dx.link = @title, @description, @link || ''
-    @dx.image = @image_url
+    @dx.image = @image_url if @dx.respond_to? :image
     
     @rss = if @xslt then
     
