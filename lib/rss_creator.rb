@@ -35,7 +35,7 @@ class RSScreator
       else
 
       
-        schema = 'channel[title, description, link]/' + \
+        schema = 'channel[title, description, link, image]/' + \
                                   'item(title, link, description, date'
         schema +=  ', ' + custom_fields.join(', ') if custom_fields.any?
         schema += ')'
@@ -135,6 +135,7 @@ class RSScreator
     end
 
     @dx.title, @dx.description, @dx.link = @title, @description, @link || ''
+    @dx.image = @image_url
     
     @rss = if @xslt then
     
