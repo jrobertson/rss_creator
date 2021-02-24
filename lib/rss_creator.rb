@@ -8,13 +8,14 @@ require 'rss_to_dynarex'
 
 class RSScreator
 
-  attr_accessor :title, :description, :link, :limit, :xslt
+  attr_accessor :title, :description, :link, :limit, :xslt, :image_url, 
+      :image_target_url
 
-  def initialize(filepath='rss.xml', dx_xslt: nil, 
-                 dx_filename: 'feed.xml', custom_fields: [], limit: 10)
+  def initialize(filepath='rss.xml', dx_xslt: nil, dx_filename: 'feed.xml', 
+                 custom_fields: [], limit: 10, debug: false)
 
 
-    @filepath = filepath
+    @filepath, @debug = filepath, debug
 
     dxfilepath = File.join(File.dirname(filepath), dx_filename)
     
@@ -96,6 +97,18 @@ class RSScreator
   def dynarex()
     @dx
   end
+  
+  def image_url=(val)
+    @image_url = val
+    @dirty = true
+  end
+  
+  alias image= image_url=
+  
+  def image_target_url=(val)
+    @image_target_url = val
+    @dirty = true
+  end  
 
   def link=(val)
     @link = val
@@ -134,7 +147,19 @@ class RSScreator
       
     else
       
-      @dx.to_rss({limit: @limit})
+      @dx.to_rss({limit: @limit}) do |doc|
+        
+        if @image_url then
+          
+          img = Rexle::Element.new('image')
+          img.add Rexle::Element.new('url').add_text @image_url
+          img.add Rexle::Element.new('link').add_text @image_target_url
+        
+          doc.root.element('channel/item').insert_before img
+        
+        end        
+        
+      end
       
     end
     
