@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rss_creator'
-  s.version = '0.4.2'
+  s.version = '0.5.0'
   s.summary = 'A gem for creating RSS feeds'
   s.authors = ['James Robertson']
   s.files = Dir['lib/rss_creator.rb']
