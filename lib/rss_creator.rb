@@ -13,21 +13,21 @@ class RSScreator
       :image_target_url
 
   def initialize(filepath='rss.xml', dx_xslt: nil, dx_filename: 'feed.xml',
-                 custom_fields: [], limit: 10, debug: false)
+                 custom_fields: [], limit: 10, log: nil, debug: false)
 
 
-    @filepath, @debug = filepath, debug
+    @filepath, @log, @debug = filepath, log, debug
 
     dxfilepath = File.join(File.dirname(filepath), dx_filename)
 
-    if filepath and File.exists? dxfilepath then
+    if filepath and FileX.exists? dxfilepath then
 
       @dx = Dynarex.new dxfilepath
       @title, @description, @link = @dx.title, @dx.description, @dx.link
       @image_url = @dx.image
 
     else
-      if filepath and File.exists? filepath
+      if filepath and FileX.exists? filepath
 
         rtd = RSStoDynarex.new filepath
         @dx = rtd.to_dynarex
@@ -67,6 +67,8 @@ class RSScreator
   end
 
   def add(itemx={title: '', link: '', description: ''}, item: itemx, id: nil)
+
+    @log.debug 'RssCreator#add item: ' + item.inspect if @log
 
     unless item[:title] and item[:link] then
       raise 'RSScreator: title or link can\'t be blank'
