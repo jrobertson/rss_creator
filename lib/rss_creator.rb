@@ -7,7 +7,7 @@ require 'rss_to_dynarex'
 
 
 class RSScreator
-  include RXFHelperModule
+  include RXFReadWriteModule
 
   attr_accessor :title, :description, :link, :limit, :xslt, :image_url,
       :image_target_url
