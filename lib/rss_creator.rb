@@ -12,21 +12,27 @@ class RSScreator
   attr_accessor :title, :description, :link, :limit, :xslt, :image_url, 
       :image_target_url
 
-  def initialize(filepath='rss.xml', dx_xslt: nil, dx_filename: 'list.xml', 
-                 custom_fields: [], limit: 10, log: nil, debug: false)
+  def initialize(filepath='rss.xml', dx_xslt: nil, dx_filename: nil, 
+                 custom_fields: [], limit: 10, log: nil, title: 'Untitled', 
+                 description: 'Description goes here', debug: false)
 
 
     @filepath, @log, @debug = filepath, log, debug
 
-    dxfilepath = File.join(File.dirname(filepath), dx_filename)
+    if dx_filename then
+      
+      dxfilepath = File.join(File.dirname(filepath), dx_filename)
     
-    if filepath and FileX.exists? dxfilepath then
+      if filepath and FileX.exists? dxfilepath then
 
-      @dx = Dynarex.new dxfilepath, debug: debug
-      @title, @description, @link = @dx.title, @dx.description, @dx.link
-      @image_url = @dx.image
+        @dx = Dynarex.new dxfilepath, debug: debug
+        @title, @description, @link = @dx.title, @dx.description, @dx.link
+        @image_url = @dx.image
+        
+      end
 
     else
+      
       if filepath and FileX.exists? filepath
       
         rtd = RSStoDynarex.new filepath
@@ -43,7 +49,8 @@ class RSScreator
                                   'item(title, link, description, date'
         schema +=  ', ' + custom_fields.join(', ') if custom_fields.any?
         schema += ')'
-        
+        @title, @description = title, description
+                                       
         @dx = Dynarex.new schema
       end
 
@@ -142,10 +149,6 @@ class RSScreator
   def print_rss()
     
     return @rss unless @dirty
-
-    if @title.nil? or @description.nil?  then
-      raise 'RSScreator: title or description can\'t be blank' 
-    end
 
     @dx.title, @dx.description, @dx.link = @title, @description, @link || ''
     @dx.image = @image_url if @dx.respond_to? :image
